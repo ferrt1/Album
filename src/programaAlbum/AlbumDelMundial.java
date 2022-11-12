@@ -19,6 +19,7 @@ public class AlbumDelMundial implements IAlbumDelMundial {
 		fabrica = new Fabrica();
 	}
 
+	
 	private Integer generarCodigo() {
 		int random = (int) Math.random()*1000;
 		if(_albums.containsKey(random)) {
@@ -27,6 +28,7 @@ public class AlbumDelMundial implements IAlbumDelMundial {
 		return random;
 	}
 
+	
 	@Override
 	public int registrarParticipante(int dni, String nombre, String tipoAlbum) {
 		Participante nuevoParticipante = new Participante(dni, nombre);
