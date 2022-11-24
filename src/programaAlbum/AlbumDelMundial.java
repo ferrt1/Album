@@ -28,6 +28,14 @@ public class AlbumDelMundial implements IAlbumDelMundial {
 		return random;
 	}
 
+	private AlbumTradicional devolverAlbum(Integer dni) {
+		return _participantes.get(dni).getAlbum();
+	}
+	
+	private String devolverTipoAlbum(Integer dni) {
+		return _participantes.get(dni).getTipoAlbum();
+	}
+	
 	
 	@Override
 	public int registrarParticipante(int dni, String nombre, String tipoAlbum) {
@@ -145,16 +153,22 @@ public class AlbumDelMundial implements IAlbumDelMundial {
 		}
 		if(_participantes.get(dni).get_figuritas().size()== 0)
 			return false;
-
-
-
+		
 		for(Integer participanteDni: _participantes.keySet()) {
 			if(!(participanteDni.equals(dni))) {
-				if(_participantes.get(dni).getTipoAlbum().equals(_participantes.get(participanteDni).getTipoAlbum())
-						&& _participantes.get(participanteDni).get_figuritas().size() != 0) {
-					for(Figuritas f: _participantes.get(participanteDni).get_figuritas()) {
-						if(f.get_valor() <= _participantes.get(dni).devuelveFiguritaPorCodigo(codFigurita).get_valor()) 
-							return true;
+				if(devolverTipoAlbum(dni).equals(devolverTipoAlbum(participanteDni))  //chequeo si los albums son del mismo tipo o si tienen figus
+					&& _participantes.get(participanteDni).get_figuritas().size() != 0) {  
+					for(Figuritas f: _participantes.get(participanteDni).get_figuritas()) {  //recorro por todas las figuritas de los participantes
+						if(_participantes.get(participanteDni).contieneFigurita(codFigurita)) {
+							if(f.get_valor() <= _participantes.get(dni).devuelveFiguritaPorCodigo(codFigurita).get_valor()) { //chequeo si el valor es mayor y si es intercambio
+								_participantes.get(dni).get_figuritas().remove(_participantes.get(dni).devuelveFiguritaPorCodigo(codFigurita));
+								_participantes.get(dni).get_figuritas().add(f);
+								_participantes.get(participanteDni).get_figuritas().remove(f);
+								_participantes.get(participanteDni).get_figuritas().add(
+										_participantes.get(dni).devuelveFiguritaPorCodigo(codFigurita));
+								return true;
+							}
+						}
 					}
 				}
 			}
@@ -169,26 +183,28 @@ public class AlbumDelMundial implements IAlbumDelMundial {
 			throw new RuntimeException("El participante no esta registrado");
 		if(_participantes.get(dni).get_figuritas().size()== 0)
 			return false;
-
-		Integer codFigurita = buscarFiguritaRepetida(dni);
-			for(Integer participanteDni: _participantes.keySet()) {
+		
+		for(Figuritas figuParticipante1: _participantes.get(dni).get_figuritas()) {		//Recorro todas las figuritas del 
+			Integer codFigurita = figuParticipante1.get_codigo();						//dni pasado como parametro y guardo 
+			for(Integer participanteDni: _participantes.keySet()) {						//su codigo
 				if(!(participanteDni.equals(dni))) {
 					if(_participantes.get(dni).getTipoAlbum().equals(_participantes.get(participanteDni).getTipoAlbum())
 							&& _participantes.get(participanteDni).get_figuritas().size() != 0) {
-						for(Figuritas f: _participantes.get(participanteDni).get_figuritas()) {
-							Integer valor = f.get_valor();
-							if(!_participantes.get(dni).contieneFigurita(codFigurita)) {
-								Integer valor2 = _participantes.get(dni).devuelveFiguritaPorCodigo(codFigurita+1).get_valor();
-								if(valor <= valor2) 
+						for(Figuritas figuParticipante2: _participantes.get(participanteDni).get_figuritas()) {
+							Integer valorFigurita1 = figuParticipante2.get_valor();
+							Integer valorFigurita2 = _participantes.get(dni).devuelveFiguritaPorCodigo(codFigurita).get_valor();
+								if(valorFigurita1 <= valorFigurita2) {
+									_participantes.get(dni).get_figuritas().remove(figuParticipante1);
+									_participantes.get(dni).get_figuritas().add(figuParticipante2);
+									_participantes.get(participanteDni).get_figuritas().remove(figuParticipante2);
+									_participantes.get(participanteDni).get_figuritas().add(figuParticipante1);
 									return true;
-							}
-							Integer valor2 = _participantes.get(dni).devuelveFiguritaPorCodigo(codFigurita).get_valor();
-								if(valor <= valor2) 
-								return true;
-						}
+								}
+						}			//Recorro las figuritas de los otros participantes y guardo su valor si el valor es igual o menor cambio
 					}
 				}
 			}
+		}
 		return false;
 	}
 

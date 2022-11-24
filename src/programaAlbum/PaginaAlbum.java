@@ -58,11 +58,13 @@ public class PaginaAlbum {
 	public String toString() {
 		StringBuilder st = new StringBuilder();
 		for(Integer posicion: _posiciones.keySet()) {
-			st.append(_posiciones.get(posicion));
-			if(posicion != _posiciones.size()-1)
-				st.append(", ");
-			st.append(" ");
+			if(_posiciones.get(posicion) != null) {
+				st.append(_posiciones.get(posicion));
+				if(posicion != _posiciones.size()-1)
+					st.append(", ");
+				st.append(" ");
 			}
+		}
 		return st.toString();
 	}
 }

@@ -38,22 +38,22 @@ public class Participante {
 	}
 
 	public boolean contieneFigurita(int codigo) {
+		boolean ret = false;
 		for(int i = 0; i < _figuritas.size(); i++) {
-			if(_figuritas.get(i).get_codigo().equals(codigo)) {
-				return true;
-			}
+				ret = ret || _figuritas.get(i).get_codigo().equals(codigo);
 		}
-		return false;
+		return ret;
 	}
 
 
 	public Figuritas devuelveFiguritaPorCodigo(int codigo) {
+		Figuritas f = new Figuritas(null, null, null, null);
 		for(int i = 0; i < _figuritas.size(); i++) {
 			if(_figuritas.get(i).get_codigo().equals(codigo)) {
-				return _figuritas.get(i);
+				f = _figuritas.get(i);
 			}
 		}
-		return null;
+		return f;
 	}
 
 	public boolean completoPais(String pais) {

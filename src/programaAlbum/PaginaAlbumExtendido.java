@@ -22,9 +22,11 @@ public class PaginaAlbumExtendido extends PaginaAlbum{
 	public String toString() {
 		StringBuilder st = new StringBuilder();
 		for(Integer posicion: get_posiciones().keySet()) {
+			if(get_posiciones().get(posicion) != null) {
 			st.append(get_posiciones().get(posicion));
 			st.append(", ");
 			}
+		}
 		return st.toString();
 		}
 	}
